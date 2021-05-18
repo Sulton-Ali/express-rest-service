@@ -44,6 +44,7 @@ router.route('/:userId').put(async (req, res) => {
   const { name, login, password } = req.body;
 
   if (
+    !userId ||
     typeof userId !== 'string' ||
     typeof name !== 'string' ||
     typeof login !== 'string' ||
@@ -78,7 +79,7 @@ router.route('/:userId').delete(async (req, res) => {
   const userDeleted = await usersService.deleteUserById(userId);
   
   if (userDeleted) {
-    res.status(204).end("User has been deleted");
+    res.status(204).end();
   } else {
     res.setHeader('Content-Type', 'application/json');
     res.status(404).json({ message: 'User with such id not found' });

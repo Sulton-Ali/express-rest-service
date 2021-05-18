@@ -26,6 +26,7 @@ router.route('/').post(async (req, res) => {
 
 });
 
+// Get method /boards/:boardId - get board by id
 router.route('/:boardId').get(async (req, res) => {
   const { boardId } = req.params;
 
@@ -37,6 +38,39 @@ router.route('/:boardId').get(async (req, res) => {
   } else {
     res.status(404).json({ message: 'Board not found' });
   }
-})
+});
+
+router.route('/:boardId').put(async (req, res) => {
+  const { boardId } = req.params;
+
+  const { title, columns } = req.body;
+
+  if ( !boardId || !Array.isArray(columns) ) {
+    res.setHeader('Content-Type', 'application/json');
+    res.status(400).json('Body of request filled incorrect!');
+    return;
+  }
+
+  const updatedBoard = await boardService.updateBoardById({ id: boardId, title, columns });
+  res.setHeader('Content-Type', 'application/json');
+  if (updatedBoard) {
+    res.status(200).json(updatedBoard);
+  } else {
+    res.status(404).json({ message: 'Board not found' });
+  }
+});
+
+router.route('/:boardId').delete(async (req, res) => {
+  const { boardId } = req.params;
+
+  const isDeleted = await boardService.deleteBoardById(boardId);
+  res.setHeader('Content-Type', 'application/json');
+  if (isDeleted) {
+    res.status(204).end();
+  } else {
+    res.status(404).json({ message: 'Board not found' });
+  }
+});
+
 
 module.exports = router;

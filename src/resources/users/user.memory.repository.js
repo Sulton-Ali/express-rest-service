@@ -10,12 +10,12 @@ const createUser = async (user) => {
   return newUser;
 };
 
-const getUserById = (userId) => {
+const getUserById = async (userId) => {
   const searchedUser = USERS.find((user) => user.id === userId);
   return searchedUser;
 };
 
-const updateUserById = (userData) => {
+const updateUserById = async (userData) => {
   let userFinded = false;
 
   const newUsers = USERS.map((user) => {
@@ -45,7 +45,7 @@ const updateUserById = (userData) => {
   return undefined;
 };
 
-const deleteUserById = (userId) => {
+const deleteUserById = async (userId) => {
   let userFinded = false;
 
   const newUsers = [];
