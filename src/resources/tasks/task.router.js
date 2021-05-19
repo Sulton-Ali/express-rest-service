@@ -11,18 +11,11 @@ router.route('/').get(async (req, res) => {
 });
 
 router.route('/').post(async (req, res) => {
-  const { boardId } = req.params;
+  // const { boardId } = req.params;
 
-  const { title, order, description, userId, columnId } = req.body;
+  const { title, order, description, userId, boardId, columnId } = req.body;
 
-  if (
-    typeof title !== 'string' ||
-    typeof order !== 'number' ||
-    typeof description !== 'string' ||
-    typeof userId !== 'string' ||
-    typeof boardId !== 'string' ||
-    typeof columnId !== 'string'
-  ) {
+  if (typeof boardId !== 'string') {
     res.setHeader('Content-Type', 'application/json');
     res.status(400).json({ message: 'Body of request filled incorrect!' });
     return;
@@ -45,13 +38,9 @@ router.route('/:taskId').get(async (req, res) => {
   const { boardId, taskId } = req.params;
 
   const task = await taskService.getTaskById(boardId, taskId);
-  res.setHeader('Content-Type', 'application/json');
-	if (task) {
-		res.status(200).json(Task.toResponse(task));
-	} else {
-		res.status(404).json({ message: 'Task not found' });
-	}
   
+  res.setHeader('Content-Type', 'application/json');
+  res.status(200).json(Task.toResponse(task));
 });
 
 router.route('/:taskId').put(async (req, res) => {
@@ -59,36 +48,31 @@ router.route('/:taskId').put(async (req, res) => {
 
   const { title, order, description, userId, boardId, columnId } = req.body;
 
-  if (
-    typeof title !== 'string' ||
-    typeof order !== 'number' ||
-    typeof description !== 'string' ||
-    typeof userId !== 'string' ||
-    typeof boardId !== 'string' ||
-    typeof columnId !== 'string'
-  ) {
+  if (typeof taskId !== 'string' || typeof boardId !== 'string') {
     res.setHeader('Content-Type', 'application/json');
     res.status(400).json({ message: 'Body of request filled incorrect!' });
     return;
   }
 
-  const updatedTask = await taskService.updateTaskById({
-		id: taskId,
-    title,
-    order,
-    description,
-    userId,
-    boardId,
-    columnId,
-  }, boardIdOld);
+  const updatedTask = await taskService.updateTaskById(
+    {
+      id: taskId,
+      title,
+      order,
+      description,
+      userId,
+      boardId,
+      columnId,
+    },
+    boardIdOld
+  );
 
   res.setHeader('Content-Type', 'application/json');
-	if (updatedTask) {
-		res.status(200).json(Task.toResponse(updatedTask));
-	} else {
-		res.status(404).json({ message: 'Task not found!' });
-	}
-  
+  if (updatedTask) {
+    res.status(200).json(Task.toResponse(updatedTask));
+  } else {
+    res.status(404).json({ message: 'Task not found!' });
+  }
 });
 
 router.route('/:taskId').delete(async (req, res) => {
@@ -97,12 +81,11 @@ router.route('/:taskId').delete(async (req, res) => {
   const isDeleted = await taskService.deleteTaskById(boardId, taskId);
 
   res.setHeader('Content-Type', 'application/json');
-	if (isDeleted) {
-		res.status(204).end();
-	} else {
-		res.status(404).json({ message: 'Task not found!' });
-	}
-  
+  if (isDeleted) {
+    res.status(204).end();
+  } else {
+    res.status(404).json({ message: 'Task not found!' });
+  }
 });
 
 module.exports = router;
